@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from "vue";
-import axios from "axios";
 
 defineProps<{ title: string }>();
-
 type Foodspot = { id: number; name: string }
 
 const foodspots: Ref<Foodspot[]> = ref([]);
 const nameField = ref("");
+let currentId = 1;
+
+function addFoodspot(name: string): void {
+  foodspots.value.push({ name, id: currentId++ });
+}
 
 function onFormSubmitted(): void {
   addFoodspot(nameField.value);
-}
-
-function addFoodspot(name: string): void {
-  const newId = Math.max(0, ...foodspots.value.map(f => f.id)) + 1;
-  foodspots.value.push({ name, id: newId });
 }
 
 function removeFoodspot(id: number): void {
@@ -23,13 +21,31 @@ function removeFoodspot(id: number): void {
 }
 
 onMounted(() => {
-  // Call the real backend
-  axios.get(`${import.meta.env.VITE_API_URL}/foodspots`)
-  .then(response => {
-    foodspots.value = response.data;
-  })
-  .catch(error => {
-    console.error("Failed to fetch foodspots:", error);
-  });
 });
 </script>
+
+<template>
+  <h2>{{ title }}</h2>
+  <form @submit="onFormSubmitted()" @submit.prevent>
+    <input type="text" placeholder="Name" v-model="nameField" />
+    <button>Add foodspot</button>
+  </form>
+  <hr />
+  <table>
+    <tr>
+      <th>Delete</th>
+      <th>Name</th>
+      <th>Id</th>
+    </tr>
+    <tr v-if="!foodspots.length">
+      <td colspan="2">No foodspots yet</td>
+    </tr>
+    <tr v-for="foodspot in foodspots" :key="foodspot.id">
+      <td>
+        <button @click="removeFoodspot(foodspot.id)" class="delete">delete</button>
+      </td>
+      <td>{{ foodspot.name }}</td>
+      <td>{{ foodspot.id }}</td>
+    </tr>
+  </table>
+</template>
