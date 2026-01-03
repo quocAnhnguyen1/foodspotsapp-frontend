@@ -1,31 +1,32 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from "vue";
-import { fetchFoodspots } from "@/api/foodspots";
-
+import { fetchFoodspots, createFoodspot, deleteFoodspot } from "@/api/foodspots";
 
 defineProps<{ title: string }>();
-type Foodspot = { id: number; name: string }
+
+type Foodspot = { id: number; name: string };
 
 const foodspots: Ref<Foodspot[]> = ref([]);
 const nameField = ref("");
-let currentId = 1;
 
-function addFoodspot(name: string): void {
-  foodspots.value.push({ name, id: currentId++ });
+async function onFormSubmitted(): Promise<void> {
+  const name = nameField.value.trim();
+  if (!name) return;
+
+  const created = await createFoodspot(name); // <- kommt mit id vom Backend zurück
+  foodspots.value.push(created);
+
+  nameField.value = "";
 }
 
-function onFormSubmitted(): void {
-  addFoodspot(nameField.value);
-}
-
-function removeFoodspot(id: number): void {
+async function removeFoodspot(id: number): Promise<void> {
+  await deleteFoodspot(id); // <- wirklich im Backend löschen
   foodspots.value = foodspots.value.filter((f) => f.id !== id);
 }
 
 onMounted(async () => {
   foodspots.value = await fetchFoodspots();
 });
-
 </script>
 
 <template>
@@ -54,7 +55,7 @@ onMounted(async () => {
 
     <tr v-for="foodspot in foodspots" :key="foodspot.id">
       <td>
-        <button @click="removeFoodspot(foodspot.id)">delete</button>
+        <button type="button" @click="removeFoodspot(foodspot.id)">delete</button>
       </td>
       <td>{{ foodspot.name }}</td>
       <td>{{ foodspot.id }}</td>
@@ -62,4 +63,3 @@ onMounted(async () => {
     </tbody>
   </table>
 </template>
-
