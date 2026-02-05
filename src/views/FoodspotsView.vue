@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import FoodspotList from "@/components/FoodspotList.vue"
-
-const someMethod = (): void => {
-  console.log('Hello There!')
-}
+import FoodspotList from '@/components/FoodspotList.vue'
 </script>
 
 

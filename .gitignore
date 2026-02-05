@@ -18,13 +18,29 @@ coverage
 /cypress/screenshots/
 
 # Editor directories and files
+# VSCode - keep settings and extensions, ignore workspace files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+*.code-workspace
+
+# IntelliJ IDEA
 .idea
+*.iml
+*.iws
+*.ipr
+
+# Other IDEs
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# OS specific
+.DS_Store
+Thumbs.db
 
 *.tsbuildinfo
